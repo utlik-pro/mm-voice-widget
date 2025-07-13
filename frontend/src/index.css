@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply bg-white text-gray-900;
+  }
+}
+
+@layer components {
+  .widget-container {
+    @apply w-full h-full bg-white rounded-lg shadow-lg overflow-hidden;
+  }
+  
+  .voice-button {
+    @apply relative inline-flex items-center justify-center p-3 bg-primary-600 text-white rounded-full transition-all duration-200 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .voice-button.active {
+    @apply bg-red-600 hover:bg-red-700 focus:ring-red-500;
+  }
+  
+  .voice-button.disabled {
+    @apply bg-gray-400 cursor-not-allowed;
+  }
+  
+  .status-indicator {
+    @apply inline-flex items-center px-2 py-1 text-xs font-medium rounded-full;
+  }
+  
+  .status-indicator.connected {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .status-indicator.connecting {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .status-indicator.disconnected {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .pulse-ring {
+    @apply absolute inset-0 rounded-full border-2 border-primary-400 animate-pulse-ring;
+  }
+  
+  .transcript-container {
+    @apply max-h-32 overflow-y-auto px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-md;
+  }
+  
+  .transcript-text {
+    @apply text-gray-700 leading-relaxed;
+  }
+  
+  .transcript-text.interim {
+    @apply text-gray-500 italic;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+} 

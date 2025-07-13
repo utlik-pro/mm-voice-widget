@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест интеграции голосового виджета</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 3rem;
+        }
+        
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        
+        .widget-info {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            max-width: 300px;
+            z-index: 9998;
+        }
+        
+        .controls {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Голосовой помощник</h1>
+        <p class="description">
+            Тестовая страница для демонстрации интеграции голосового виджета через iframe.
+            Виджет должен появиться в правом нижнем углу экрана.
+        </p>
+        
+        <div class="controls">
+            <button onclick="sendMessage('connect')">Подключить виджет</button>
+            <button onclick="sendMessage('disconnect')">Отключить виджет</button>
+            <button onclick="toggleTheme()">Сменить тему</button>
+            <button onclick="showLogs()">Показать логи</button>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🎤 Голосовой интерфейс</h3>
+                <p>Общение с ИИ-помощником через микрофон с использованием LiveKit WebRTC</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📱 Адаптивный дизайн</h3>
+                <p>Работает на всех устройствах - десктоп, планшет, мобильный</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🖼️ iframe интеграция</h3>
+                <p>Легко встраивается на любой сайт без модификации кода</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🔒 Безопасность</h3>
+                <p>HTTPS, правильная обработка разрешений микрофона и CORS</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 3rem; opacity: 0.7;">
+            <p>Откройте DevTools (F12) чтобы увидеть логи взаимодействия с виджетом</p>
+        </div>
+    </div>
+    
+    <div class="widget-info">
+        <strong>Статус виджета:</strong><br>
+        <span id="widget-status">Загружается...</span><br><br>
+        <strong>Последнее событие:</strong><br>
+        <span id="last-event">-</span>
+    </div>
+    
+    <!-- Голосовой виджет -->
+    <iframe
+        id="voice-widget"
+        src="http://localhost:3000/widget?roomName=test-room&enableTranscription=true&theme=light"
+        style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            height: 90px;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 9999;
+            transition: all 0.3s ease;
+        "
+        allow="microphone"
+        title="Голосовой помощник"
+    ></iframe>
+    
+    <script>
+        let currentTheme = 'light';
+        let logs = [];
+        
+        // Слушаем сообщения от виджета
+        window.addEventListener('message', function(event) {
+            // Безопасность: проверяем origin
+            if (event.origin !== 'http://localhost:3000') {
+                return;
+            }
+            
+            const { type, data } = event.data;
+            const timestamp = new Date().toLocaleTimeString();
+            
+            // Логируем событие
+            logs.push(`[${timestamp}] ${type}: ${JSON.stringify(data)}`);
+            console.log('Событие от виджета:', type, data);
+            
+            // Обновляем статус
+            document.getElementById('last-event').textContent = `${type} (${timestamp})`;
+            
+            // Обрабатываем события
+            switch(type) {
+                case 'widgetReady':
+                    document.getElementById('widget-status').textContent = 'Готов к работе';
+                    break;
+                    
+                case 'connectionStateChange':
+                    const status = data.isConnected ? 'Подключен' : 
+                                  data.isConnecting ? 'Подключается...' : 
+                                  data.error ? `Ошибка: ${data.error}` : 'Отключен';
+                    document.getElementById('widget-status').textContent = status;
+                    break;
+                    
+                case 'transcription':
+                    console.log('Транскрипция:', data.text);
+                    break;
+                    
+                case 'message':
+                    console.log('Сообщение:', data);
+                    break;
+                    
+                case 'error':
+                    console.error('Ошибка виджета:', data);
+                    break;
+            }
+        });
+        
+        // Отправка сообщений виджету
+        function sendMessage(type, data = {}) {
+            const widget = document.getElementById('voice-widget');
+            widget.contentWindow.postMessage({
+                type: type,
+                data: data
+            }, 'http://localhost:3000');
+        }
+        
+        // Смена темы
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            const widget = document.getElementById('voice-widget');
+            const url = new URL(widget.src);
+            url.searchParams.set('theme', currentTheme);
+            widget.src = url.toString();
+        }
+        
+        // Показать логи
+        function showLogs() {
+            const logWindow = window.open('', '_blank', 'width=600,height=400');
+            logWindow.document.write(`
+                <html>
+                <head><title>Логи виджета</title></head>
+                <body style="font-family: monospace; padding: 20px;">
+                    <h2>Логи взаимодействия с виджетом</h2>
+                    <pre>${logs.join('\n')}</pre>
+                </body>
+                </html>
+            `);
+        }
+        
+        // Адаптивность виджета
+        function adjustWidget() {
+            const widget = document.getElementById('voice-widget');
+            if (window.innerWidth < 480) {
+                widget.style.width = '280px';
+                widget.style.right = '10px';
+                widget.style.bottom = '10px';
+            } else {
+                widget.style.width = '320px';
+                widget.style.right = '20px';
+                widget.style.bottom = '20px';
+            }
+        }
+        
+        window.addEventListener('resize', adjustWidget);
+        adjustWidget();
+        
+        // Первоначальная настройка
+        setTimeout(() => {
+            sendMessage('updateConfig', {
+                enableTranscription: true,
+                theme: currentTheme
+            });
+        }, 1000);
+    </script>
+</body>
+</html> 
