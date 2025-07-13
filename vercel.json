@@ -1,5 +1,5 @@
 {
-  "name": "mm-voice-widget",
+  "name": "bbos-voice-widget",
   "version": 2,
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
@@ -8,20 +8,6 @@
       "runtime": "python3.9"
     }
   },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/widget",
-      "dest": "/widget.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "headers": [
     {
       "source": "/api/(.*)",
