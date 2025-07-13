@@ -1,5 +1,5 @@
 {
-  "name": "bbos-voice-widget-2024",
+  "name": "bbos-voice-widget",
   "version": 2,
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
