@@ -1,8 +1,10 @@
 {
   "name": "bbos-voice-widget",
   "version": 2,
-  "buildCommand": "cd frontend && npm run build",
+  "framework": null,
+  "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
+  "installCommand": "npm install && cd frontend && npm install",
   "headers": [
     {
       "source": "/api/(.*)",

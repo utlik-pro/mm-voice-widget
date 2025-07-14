@@ -7,18 +7,14 @@
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:api\"",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:api": "vercel dev",
-    "build": "npm run build:frontend",
+    "build": "npm run install-frontend && npm run build:frontend",
     "build:frontend": "cd frontend && npm run build",
     "install-frontend": "cd frontend && npm install",
     "deploy:vercel": "vercel --prod",
     "lint": "cd frontend && npm run lint",
     "type-check": "cd frontend && npm run type-check"
   },
-  "dependencies": {
-    "next": "^14.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "concurrently": "^8.2.0",
     "vercel": "^32.0.0"

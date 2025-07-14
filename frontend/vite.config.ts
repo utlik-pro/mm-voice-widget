@@ -13,6 +13,10 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        widget: path.resolve(__dirname, 'widget.html')
+      },
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
